@@ -1,0 +1,13 @@
+name: VerticalLink
+main: de.ella.verticallink.VerticalLink
+version: 1.1.3
+api-version: '1.21'
+author: David & Ella
+commands:
+  verticallink:
+    description: Reload config and show info
+    aliases: [vl]
+    permission: verticallink.reload
+permissions:
+  verticallink.reload:
+    default: op
