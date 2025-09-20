@@ -1,67 +1,65 @@
-# Debug-Ausgaben in der Konsole
-debug: true
+# === Stackworld default config ===
+# Base world and ordered stacks upward and downward.
+baseWorld: "world"
 
-# Namen der Welten
-fromWorld: world            # Unterwelt / Overworld
-toWorld: skylands           # Himmelswelt / Sky
+stack:
+  up:
+    - name: "skyworld"
+      createIfMissing: true
+      environment: NORMAL      # NORMAL | NETHER | THE_END
+      type: CUSTOM             # NORMAL | SUPERFLAT | CUSTOM
+      generator: "the_void"    # datapack/plugin generator key
+      seed: 12345
+      ambiance:
+        skylightAtBottom: true
+        eternalNight: false
+      copy:
+        height: 32
+        areaXZ: 201            # square side length around player (odd)
+        blocksPerTick: 4000
+        mode: OVERWRITE        # OVERWRITE | AIR_ONLY
+        cleanup: true
+        blacklist: [BEDROCK, WATER, LAVA, GLASS]
+        tileEntities: true
 
-# Trigger oben (Overworld -> Sky): löst aus bei (maxY - offset)
-topTriggerOffset: 0
+    - name: "space"
+      createIfMissing: true
+      environment: THE_END
+      type: CUSTOM
+      generator: "the_void"
+      seed: 9876
+      ambiance:
+        eternalNight: true
+      copy:
+        height: 32
 
-# Teleport-Anti-Bounce
-freezeTicks: 40             # Spieler kurz einfrieren (Ticks), um Physik/Clipping zu vermeiden
-tpCooldownMs: 60000         # Cooldown pro Spieler (ms)
-cooldownMs: 15000           # Cooldown für Copy-Job (ms)
+  down:
+    - name: "caveWorld"
+      createIfMissing: true
+      environment: NORMAL
+      type: CUSTOM
+      generator: "cave_full"
+      bottomBoundaryY: -120
+    - name: "hollowEarth"
+      createIfMissing: true
+      environment: NORMAL
+      type: CUSTOM
+      generator: "hollow_mega"
+    - name: "lavaWorld"
+      createIfMissing: true
+      environment: NORMAL
+      type: CUSTOM
+      generator: "lava_void"
 
-
-link:
-  hysteresis: 3  # Abstand (in Blöcken) um die Mitte der Slice, bevor die Welt gewechselt wird
-
-  
-
-# Kopier-Slice (zentriert um Spieler-XZ, fest in Y verankert)
-copy:
-  enabled: true             # Kopieren aktiv
-  mode: OVERWRITE           # OVERWRITE = hart überschreiben, AIR_ONLY = nur in Luft schreiben
-  override: true            # (Legacy/Backcompat) entspricht OVERWRITE
-  cleanup: true             # Ziel-Slice vor dem Kopieren komplet leeren (empfohlen)
-  areaXZ: 201               # Breite/Tiefe des Quadrats (ungerade Zahl)
-  height: 20                # Höhe der Slice
-  
-  blocksPerTick: 4000       # Drosselung pro Tick
-  blacklist:                # Diese Materialien werden nie kopiert (und bei OVERWRITE optional entfernt)
-    - WATER
-    - LAVA
-    - KELP
-    - KELP_PLANT
-    - SEAGRASS
-    - TALL_SEAGRASS
-    - BUBBLE_COLUMN
-    - POWDER_SNOW
-    - GLASS
-
-progress:
-  actionbar: true         # Fortschritt als Actionbar
-  intervalTicks: 10       # wie oft updaten
+teleport:
+  midSwitch:
+    enabled: true
+    hysteresis: 6        # ±3 around the band center
+  cooldownMs: 60000
 
 safety:
-  holdDuringCopyMs: 10000 # so lange Spieler „oben halten“
-  anchorGlass: true       # temporär GLAS unter Füße, bis die Kopie fertig ist
-  anchorMaterial: GLASS   # Material des Ankers
-
-
-# Nur Spieler teleportieren, keine Kopien (simple Stack-World)
-teleport:
-  onlyPlayer: false
-
-# Easy Mode: sichere Landeposition suchen (Insel/Boden) statt Slice-Band
-easymode:
-  enabled: false
-  radius: 12               # XZ-Radius zur Suche nach „festem Boden“
-
-# Offsets für die klassische Band-Logik (werden im Easy Mode ignoriert)
-skyLandingOffsetFromMin: 1
-overworldLandingOffsetFromMax: 2
-bottomSoftOffsetFromMin: 4
-bottomHardOffsetFromMin: 1
-carveAirAtLanding: true
+  safePlatform:
+    enabled: true
+    block: GLASS
+    size: 3
+  holdDuringCopyMs: 10000
